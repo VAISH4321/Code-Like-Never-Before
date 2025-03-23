@@ -1,0 +1,225 @@
+import streamlit as st
+import google.generativeai as genai
+
+# ========== GOOGLE GEMINI FLASH API SETUP ==========
+API_KEY = "AIzaSyBXMxjZyXv29Dftocn5ZLeKjIZUPZehty4"  # Replace with your actual API key
+genai.configure(api_key=API_KEY)
+
+# ========== PAGE CONFIGURATION ==========
+st.set_page_config(page_title="QuantumCoder", page_icon="⚛️", layout="wide")
+
+# Initialize Session State
+if "page" not in st.session_state:
+    st.session_state.page = "home"
+if "show_chat" not in st.session_state:
+    st.session_state.show_chat = False
+
+# ========== CUSTOM STYLING ==========
+st.markdown(
+    """
+    <style>
+        /* General Page Styling */
+        body, [data-testid="stAppViewContainer"] {
+            background-color: #F5F7FA;
+            font-family: 'Arial', sans-serif;
+        }
+
+        /* Navigation Bar */
+        .topnav {
+            background: #1E293B;
+            padding: 12px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 10px;
+        }
+        .topnav a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+        .topnav a:hover {
+            background-color: #334155;
+        }
+
+        /* Sections */
+        .section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 1.2s ease-in-out;
+            margin: 15px 0;
+            color: black;
+        }
+        /* Chatbot */
+        .chat-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #1E293B;
+            padding: 15px;
+            width: 400px;
+            border-radius: 10px;
+            box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+            color: white;
+        }
+        .chat-input {
+            background: #F8FAFC;
+            color: black;
+            padding: 10px;
+            border-radius: 5px;
+            width: 100%;
+            margin-top: 10px;
+            font-size: 16px;
+        }
+        .chat-response {
+            background: #F1F5F9;
+            color: black;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-top: 5px;
+        }
+        .chat-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #334155;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .chat-btn:hover {
+            background: #475569;
+        }
+
+        /* Features & Live Stats Styling */
+        .info-box {
+            background: #1E293B;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            font-size: 14px;
+            color: gray;
+            margin-top: 20px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        <style>
+        /* Chatbox Input Field Fix */
+        .stTextInput > div > div > input {
+            background-color: #F8FAFC !important;  /* Light background */
+            color: black !important;  /* Dark text */
+            font-size: 16px !important;
+            padding: 10px !important;
+            border: 2px solid #1E293B !important;  /* Dark border */
+            border-radius: 5px !important;
+        }
+        .stTextInput > div > div > input::placeholder {
+            color: #475569 !important;  /* Dark gray placeholder text */
+            font-style: italic;
+        }
+    </style>
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+# ========== NAVIGATION BAR ==========
+st.markdown(
+    """
+    <div class="topnav">
+        <div style="font-weight:bold; color: white;">⚛️ QuantumCoder</div>
+        <div>
+            <a href="?page=home">🏠 Home</a>
+            <a href="?page=features">🚀 Features</a>
+            <a href="?page=stats">📊 Live Stats</a>
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
+# Read Query Params
+query_params = st.query_params
+if "page" in query_params:
+    st.session_state.page = query_params["page"]
+
+# ========== PAGE CONTENT ==========
+if st.session_state.page == "home":
+    st.markdown("<h2 style='color: black;'>🏠 Code Like Never Before</h2>", unsafe_allow_html=True)
+    st.markdown(
+        "<div class='section'><p>Create an open-source generative code assistant, tailored for specific programming languages and frameworks — your ultimate AI-powered coding partner.</p></div>",
+        unsafe_allow_html=True,
+    )
+
+    # Toggle Chatbot
+    if st.button("💬 Chat with AI"):
+        st.session_state.show_chat = not st.session_state.show_chat
+
+elif st.session_state.page == "features":
+    st.markdown("<h2 style='color: black;'>🚀 Key Features</h2>", unsafe_allow_html=True)
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.markdown("<div class='info-box'>💡 AI-Powered Code Generator</div>", unsafe_allow_html=True)
+        st.markdown("<div class='info-box'>📂 Code Snippet Library</div>", unsafe_allow_html=True)
+    with col2:
+        st.markdown("<div class='info-box'>🌎 Global Coding Challenges</div>", unsafe_allow_html=True)
+        st.markdown("<div class='info-box'>📅 Hackathon Alerts</div>", unsafe_allow_html=True)
+    with col3:
+        st.markdown("<div class='info-box'>🧑‍💻 Community Forum</div>", unsafe_allow_html=True)
+        st.markdown("<div class='info-box'>📊 AI Code Optimization</div>", unsafe_allow_html=True)
+
+elif st.session_state.page == "stats":
+    st.markdown("<h2 style='color: black;'>📊 Live Stats</h2>", unsafe_allow_html=True)
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.markdown("<div class='info-box'>👨‍💻 5240 Users</div>", unsafe_allow_html=True)
+    with col2:
+        st.markdown("<div class='info-box'>🚀 832 Projects</div>", unsafe_allow_html=True)
+    with col3:
+        st.markdown("<div class='info-box'>📜 120456 Lines of Code</div>", unsafe_allow_html=True)
+
+# ========== CHATBOT FUNCTION ==========
+def chat_with_gemini(prompt):
+    """Use Google Gemini Flash API to generate AI responses."""
+    try:
+        model = genai.GenerativeModel("gemini-1.5-flash")
+        response = model.generate_content(prompt)
+        return response.text
+    except Exception as e:
+        return "⚠️ Error: Unable to connect to AI service."
+
+# ========== CHATBOT UI ==========
+if st.session_state.show_chat:
+    st.markdown("<div class='chat-container'>", unsafe_allow_html=True)
+    st.markdown("<h2 style='color: black;'>🤖 AI Chatbot</h2>", unsafe_allow_html=True)
+    #st.markdown("### 🤖 AI Chatbot", unsafe_allow_html=True)
+    user_input = st.text_input("Ask me anything about coding!", key="chat_input", help="Type your query here!")
+
+    if user_input:
+        response = chat_with_gemini(user_input)
+        st.markdown(f"<div class='chat-response'>{response}</div>", unsafe_allow_html=True)
+
+    st.markdown("</div>", unsafe_allow_html=True)
+# ========== FOOTER ==========
+st.markdown("<div class='footer'>© 2025 QuantumCoder | <a href='https://github.com' target='_blank'>GitHub</a> | <a href='https://linkedin.com' target='_blank'>LinkedIn</a></div>", unsafe_allow_html=True)
