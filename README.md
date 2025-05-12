@@ -29,29 +29,6 @@ QuantumCoder is a versatile, AI-powered coding assistant designed to streamline 
 
 ---
 
-### **Setup & Deployment**
-
-1. Clone the repository:  
-   ```bash
-   git clone https://github.com/your-repo/quantumcoder.git
-   cd quantumcoder
-   ```
-
-2. Install dependencies:  
-   ```bash
-   pip install streamlit google-generativeai
-   ```
-
-3. Add your API key:  
-   Set the `API_KEY` variable in the source code with your Google Gemini API key.
-
-4. Run the Streamlit application:  
-   ```bash
-   streamlit run app.py
-   ```
-
----
-
 ### **Usage**
 
 - Navigate through intuitive sections: Home, Features, and Live Stats.  
@@ -67,6 +44,3 @@ QuantumCoder is a versatile, AI-powered coding assistant designed to streamline 
 - **Community Integrations**: Foster collaborations with forums and hackathon alerts.
 
 ---
-
-### **License**  
-This project is open-source and distributed under a permissive license, encouraging contribution and innovation while ensuring proper attribution.
